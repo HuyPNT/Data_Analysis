@@ -108,3 +108,31 @@ def load_sales_data(file_or_files):
     else:
         logging.error("Đầu vào không hợp lệ cho load_sales_data.")
         return pd.DataFrame()
+
+
+def load_all_sales_data():
+    """
+    Tự động tải toàn bộ file CSV trong thư mục data/sales_data/.
+    Không cần chọn file thủ công.
+    """
+    # Tìm thư mục sales_data
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    sales_dir = os.path.join(base_dir, 'sales_data')
+
+    if not os.path.exists(sales_dir):
+        logging.error(f"Thư mục không tồn tại: {sales_dir}")
+        return pd.DataFrame()
+
+    # Lấy tất cả file CSV
+    csv_files = sorted([
+        os.path.join(sales_dir, f)
+        for f in os.listdir(sales_dir)
+        if f.endswith('.csv')
+    ])
+
+    if not csv_files:
+        logging.warning(f"Không tìm thấy file CSV trong {sales_dir}")
+        return pd.DataFrame()
+
+    logging.info(f"Tìm thấy {len(csv_files)} file CSV trong {sales_dir}")
+    return load_multiple_files(csv_files)
